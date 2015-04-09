@@ -88,17 +88,32 @@ func (w *Watcher) Close() error {
 
 // Add starts watching the named file or directory (non-recursively).
 func (w *Watcher) Add(name string) error {
-	name = filepath.Clean(name)
+	return w.AddFlags(name, AllOps)
+}
+
+// Add a watch limited to the particular operations
+func (w *Watcher) AddFlags(name string, inotifyFlags Op) error {
+        name = filepath.Clean(name)
 	if w.isClosed() {
 		return errors.New("inotify instance already closed")
 	}
+	var flags uint32
 
-	const agnosticEvents = syscall.IN_MOVED_TO | syscall.IN_MOVED_FROM |
-		syscall.IN_CREATE | syscall.IN_ATTRIB | syscall.IN_MODIFY |
-		syscall.IN_MOVE_SELF | syscall.IN_DELETE | syscall.IN_DELETE_SELF
-
-	var flags uint32 = agnosticEvents
-
+	if inotifyFlags & Create != 0{
+		flags |= syscall.IN_CREATE | syscall.IN_MOVED_TO
+	}
+        if inotifyFlags & Remove != 0 {
+		flags |= syscall.IN_DELETE_SELF | syscall.IN_DELETE
+	}
+	if inotifyFlags & Write != 0 {
+		flags |= syscall.IN_MODIFY
+	}
+	if inotifyFlags & Rename != 0 {
+		flags |= syscall.IN_MOVE_SELF | syscall.IN_MOVED_FROM
+	}
+	if inotifyFlags & Chmod != 0 {
+		flags |= syscall.IN_ATTRIB
+	}
 	w.mu.Lock()
 	watchEntry, found := w.watches[name]
 	w.mu.Unlock()

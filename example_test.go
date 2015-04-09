@@ -9,7 +9,7 @@ package fsnotify_test
 import (
 	"log"
 
-	"github.com/go-fsnotify/fsnotify"
+	"github.com/scalingdata/fsnotify-v1"
 )
 
 func ExampleNewWatcher() {

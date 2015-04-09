@@ -91,6 +91,11 @@ func (w *Watcher) Close() error {
 
 // Add starts watching the named file or directory (non-recursively).
 func (w *Watcher) Add(name string) error {
+	return w.AddFlags(name, AllOps)
+}
+
+/* TODO: actually propagate flags to kqueue */
+func (w *Watcher) AddFlags(name string, flags Op) error {
 	w.mu.Lock()
 	w.externalWatches[name] = true
 	w.mu.Unlock()

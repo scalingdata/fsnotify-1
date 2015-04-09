@@ -28,6 +28,8 @@ const (
 	Remove
 	Rename
 	Chmod
+
+	AllOps = Create | Write | Remove | Rename | Chmod
 )
 
 // String returns a string representation of the event in the form

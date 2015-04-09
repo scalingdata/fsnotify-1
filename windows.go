@@ -65,6 +65,11 @@ func (w *Watcher) Close() error {
 
 // Add starts watching the named file or directory (non-recursively).
 func (w *Watcher) Add(name string) error {
+	return w.AddFlags(name, AllOps)
+}
+
+// TODO: propagate flags to syscall
+func (w *Watcher) AddFlags(name string, flags Op) error {
 	if w.isClosed {
 		return errors.New("watcher already closed")
 	}

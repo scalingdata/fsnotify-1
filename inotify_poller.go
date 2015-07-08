@@ -43,9 +43,27 @@ func newFdPoller(fd int) (*fdPoller, error) {
 	if poller.epfd == -1 {
 		return nil, errno
 	}
+
 	// Create pipe; pipe[0] is the read end, pipe[1] the write end.
 	errno = syscall.Pipe2(poller.pipe[:], syscall.O_NONBLOCK)
-	if errno != nil {
+
+	// Pipe2 is only available in 2.6.27 and up
+	if errno == syscall.ENOSYS {
+		errno = syscall.Pipe(poller.pipe[:])
+		if errno != nil {
+			return nil, errno
+		}
+
+		_, _, errno := syscall.Syscall(syscall.SYS_FCNTL, uintptr(poller.pipe[0]), syscall.F_SETFL, syscall.O_NONBLOCK)
+		if errno != 0 {
+			return nil, errno
+		}
+
+		_, _, errno = syscall.Syscall(syscall.SYS_FCNTL, uintptr(poller.pipe[1]), syscall.F_SETFL, syscall.O_NONBLOCK)
+		if errno != 0 {
+			return nil, errno
+		}
+	} else if errno != nil {
 		return nil, errno
 	}
 

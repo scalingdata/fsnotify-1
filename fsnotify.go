@@ -28,8 +28,9 @@ const (
 	Remove
 	Rename
 	Chmod
+	Overflow
 
-	AllOps = Create | Write | Remove | Rename | Chmod
+	AllOps = Create | Write | Remove | Rename | Chmod | Overflow
 )
 
 // String returns a string representation of the event in the form
@@ -52,6 +53,9 @@ func (e Event) String() string {
 	}
 	if e.Op&Chmod == Chmod {
 		buffer.WriteString("|CHMOD")
+	}
+	if e.Op&Overflow == Overflow {
+		buffer.WriteString("|OVERFLOW")
 	}
 
 	// If buffer remains empty, return no event names

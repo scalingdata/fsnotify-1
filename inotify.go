@@ -293,5 +293,8 @@ func newEvent(name string, mask uint32) Event {
 	if mask&syscall.IN_ATTRIB == syscall.IN_ATTRIB {
 		e.Op |= Chmod
 	}
+	if mask&syscall.IN_Q_OVERFLOW == syscall.IN_Q_OVERFLOW {
+		e.Op |= Overflow
+	}
 	return e
 }

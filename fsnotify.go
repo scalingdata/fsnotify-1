@@ -14,8 +14,9 @@ import (
 
 // Event represents a single file system notification.
 type Event struct {
-	Name string // Relative path to the file or directory.
-	Op   Op     // File operation that triggered the event.
+	Name       string // Relative path to the file or directory.
+	Op         Op     // File operation that triggered the event.
+	Discovered bool   // Indicates event was discovered via means other than filesystem notification (e.g. filesystem walk)
 }
 
 // Op describes a set of file operations.

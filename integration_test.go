@@ -500,6 +500,13 @@ func TestFsnotifySubDir(t *testing.T) {
 			} else {
 				t.Logf("unexpected event received: %s", event)
 			}
+
+			// Confirm IsDir flag is set appropriately on supported platforms
+			if event.Name == filepath.Clean(testSubDir) && runtime.GOOS == "linux" {
+				if event.IsDir == false {
+					t.Fatalf("expected %s to be marked as directory", event)
+				}
+			}
 		}
 		done <- true
 	}()

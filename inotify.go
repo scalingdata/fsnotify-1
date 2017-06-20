@@ -296,5 +296,8 @@ func newEvent(name string, mask uint32) Event {
 	if mask&syscall.IN_Q_OVERFLOW == syscall.IN_Q_OVERFLOW {
 		e.Op |= Overflow
 	}
+	if mask&syscall.IN_ISDIR == syscall.IN_ISDIR {
+		e.IsDir = true
+	}
 	return e
 }
